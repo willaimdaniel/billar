@@ -1,24 +1,24 @@
-import { StyleSheet, Text, SafeAreaView, FlatList, View } from 'react-native'
+import { StyleSheet, Text, SafeAreaView, FlatList, View, useWindowDimensions } from 'react-native'
 import React, { useContext } from 'react'
 import { PlayersContext } from '../../context/PlayersContext'
+import Score from './Score'
 
 export default function PlayersList() {
     const { players } = useContext(PlayersContext)
+    const { width } = useWindowDimensions();
+
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
                 data={players}
                 horizontal
-                keyExtractor={(item) => item.idPlayer}
+                keyExtractor={(item) => item.player}
+                snapToInterval={width}
+                showsHorizontalScrollIndicator={false}
                 renderItem={({ item, index }) => {
                     return (
                         <View style={styles.item}>
-                            <Text style={styles.text}>
-                                {item.idPlayer}
-                            </Text>
-                            <Text style={styles.text}>
-                                {item.player}
-                            </Text>
+                            <Score item={item} />
                         </View>
                     )
                 }}
@@ -29,13 +29,10 @@ export default function PlayersList() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 0.3
+        flex: 1
     },
-    item:{
+    item: {
         padding: 5
     },
-    text:{
-        textAlign: 'center',
-        color: '#dad7cd'
-    }
+
 })

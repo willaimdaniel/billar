@@ -1,17 +1,24 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native'
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { PlayersContext } from '../../context/PlayersContext'
+import {NavContext} from '../../context/NavContext'
 
-export default function RegisterPlayer({ player }) {
+export default function RegisterPlayer({ numplayer }) {
     const { players, setplayers } = useContext(PlayersContext)
-    const [idPlayer, setidPlayer] = useState(1)
+    const { setpage } = useContext(NavContext)
 
     function register() {
-        if (player) {
-            setidPlayer(idPlayer + 1)
-            setplayers([...players, {idPlayer, player}])
+        let allplayers = []
+        if (numplayer) {
+            for (let index = 0; index < numplayer; index++) {
+                let num = index + 1
+                let player = { player: 'Jugador: ' + num }
+                allplayers.push(player)
+            }
+            setplayers(allplayers)
+            setpage('billar')
         } else {
-            alert('Por favor ingresa tu nombre')
+            alert('Por favor ingrese el numero de jugadores')
         }
     }
 
@@ -19,7 +26,7 @@ export default function RegisterPlayer({ player }) {
         <View>
             <Pressable onPress={register}>
                 <Text style={styles.title}>
-                    Registrar jugador
+                    Jugar
                 </Text>
             </Pressable>
         </View>
@@ -29,6 +36,8 @@ export default function RegisterPlayer({ player }) {
 const styles = StyleSheet.create({
     title: {
         color: '#dad7cd',
-        fontSize: 40
+        fontSize: 40,
+        padding: 20
+
     }
 })

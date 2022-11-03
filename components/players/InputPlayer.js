@@ -7,9 +7,10 @@ export default function InputPlayer({namePlayer}) {
         <View>
             <TextInput
                 style={styles.input}
-                placeholder='Nombre del jugador'
+                placeholder='#'
                 placeholderTextColor={'#a3b18a'}
                 onChangeText={namePlayer}
+                keyboardType='numeric'
             />
         </View>
     )

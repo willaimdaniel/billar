@@ -1,24 +1,15 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native'
 import React, { useContext, useState } from 'react'
-import { NavContext } from '../context/NavContext'
-import PlayersList from '../components/players/PlayersList'
 import InputPlayer from '../components/players/InputPlayer'
 import RegisterPlayer from '../components/players/RegisterPlayer'
 
 export default function PlayerScreen() {
-    const { setpage } = useContext(NavContext)
     const [player, setplayer] = useState()
 
     return (
         <View style={styles.container}>
-            <PlayersList />
             <InputPlayer namePlayer={p => setplayer(p)} />
-            <RegisterPlayer player={player} />
-            <Pressable onPress={() => setpage('billar')}>
-                <Text style={styles.jugar}>
-                    Empezar a jugar
-                </Text>
-            </Pressable>
+            <RegisterPlayer numplayer={player} />
         </View>
     )
 }
@@ -29,6 +20,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#588157',
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection: 'row'
     },
     jugar: {
         color: '#f4a261',

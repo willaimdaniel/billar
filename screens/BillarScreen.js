@@ -1,16 +1,34 @@
 import { StyleSheet, Text, View, Pressable, SafeAreaView } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Camera, CameraType } from 'expo-camera'
+import PlayersList from '../components/Game/PlayersList';
 
 export default function BillarScreen() {
     const [permission, requestPermission] = Camera.useCameraPermissions();
+    const [video, setvideo] = useState(null)
+
+    //useEffect(() => {
+    //    (
+    //        async () => {
+    //            if (video) {
+    //                const data = await video.recordAsync();
+    //                console.log(data.uri);
+    //            }
+    //        }
+    //    )()
+    //}, [])
+
+    function record() {
+        //video.stopRecording();
+        //console.log(video);
+        console.log('dete');
+    }
 
     if (!permission) {
         return <View />;
     }
 
     if (!permission.granted) {
-        // Camera permissions are not granted yet
         return (
             <View style={styles.container}>
                 <Text style={{ textAlign: 'center' }}>Necesitamos tu permiso para mostrar la cámara.</Text>
@@ -25,10 +43,18 @@ export default function BillarScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Camera style={styles.camera} type={CameraType.front}>
+            <Camera
+                style={styles.camera}
+                type={CameraType.front}
+                ref={ref => setvideo(ref)}
+            >
                 <View style={styles.cameraContainer}>
-                    <Text>algo aca</Text>
-
+                    <PlayersList />
+                    <Pressable onPress={record}>
+                        <Text style={{ fontSize: 20, padding: 10}}>
+                            VAR
+                        </Text>
+                    </Pressable>
                 </View>
             </Camera>
         </SafeAreaView>
@@ -46,7 +72,6 @@ const styles = StyleSheet.create({
     },
     cameraContainer: {
         flex: 1,
-        //backgroundColor: 'transparent',
         justifyContent: 'center',
         alignItems: 'center'
     },
