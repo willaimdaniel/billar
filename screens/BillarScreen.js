@@ -1,27 +1,32 @@
 import { StyleSheet, Text, View, Pressable, SafeAreaView } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, {useContext, useState } from 'react'
 import { Camera, CameraType } from 'expo-camera'
-import PlayersList from '../components/Game/PlayersList';
+import { NavContext } from '../context/NavContext';
+import { VarContext } from '../context/VarContext';
+import Score from '../components/Game/Score';
 
 export default function BillarScreen() {
     const [permission, requestPermission] = Camera.useCameraPermissions();
+    const [status, permissionmicrophone] = Camera.useMicrophonePermissions();
     const [video, setvideo] = useState(null)
 
-    //useEffect(() => {
-    //    (
-    //        async () => {
-    //            if (video) {
-    //                const data = await video.recordAsync();
-    //                console.log(data.uri);
-    //            }
-    //        }
-    //    )()
-    //}, [])
+    const { setpage } = useContext(NavContext)
+    const { setvideoGame } = useContext(VarContext)
+
+    async function startGame() {
+        if (status.granted === true) {
+            const data = await video.recordAsync({ mute: true });
+            setvideoGame(data.uri)
+            console.log(data.uri);
+        } else {
+            permissionmicrophone();
+        }
+
+    }
 
     function record() {
-        //video.stopRecording();
-        //console.log(video);
-        console.log('dete');
+        video.stopRecording();
+        setpage('var')
     }
 
     if (!permission) {
@@ -45,16 +50,24 @@ export default function BillarScreen() {
         <SafeAreaView style={styles.container}>
             <Camera
                 style={styles.camera}
-                type={CameraType.front}
+                type={CameraType.back}
                 ref={ref => setvideo(ref)}
             >
                 <View style={styles.cameraContainer}>
-                    <PlayersList />
-                    <Pressable onPress={record}>
-                        <Text style={{ fontSize: 20, padding: 10}}>
-                            VAR
-                        </Text>
-                    </Pressable>
+                    <Score />
+                    <View style={{ flexDirection: 'row' }}>
+
+                        <Pressable onPress={startGame}>
+                            <Text style={styles.var}>
+                                Jugar
+                            </Text>
+                        </Pressable>
+                        <Pressable onPress={record}>
+                            <Text style={styles.var}>
+                                VAR
+                            </Text>
+                        </Pressable>
+                    </View>
                 </View>
             </Camera>
         </SafeAreaView>
@@ -75,4 +88,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    var: {
+        fontSize: 30,
+        padding: 10,
+        color: '#a8dadc'
+    }
 })

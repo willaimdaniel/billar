@@ -1,6 +1,6 @@
 import { StyleSheet, Text, SafeAreaView, FlatList, View, useWindowDimensions } from 'react-native'
 import React, { useContext } from 'react'
-import { PlayersContext } from '../../context/PlayersContext'
+import { PlayersContext } from '../../context/VarContext'
 import Score from './Score'
 
 export default function PlayersList() {

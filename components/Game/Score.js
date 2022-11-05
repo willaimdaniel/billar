@@ -11,7 +11,7 @@ export default function Score({ item }) {
     return (
         <View style={{ flex: 1, height, width, justifyContent: 'space-evenly' }}>
             <Text style={styles.text}>
-                {item.player}
+                players
             </Text>
             <View style={styles.points} >
                 <Pressable onPress={() => setpoint(point + 1)}>
