@@ -3,16 +3,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import Router from './routes/Router';
 import { NavProvider } from './context/NavContext';
 import { VarProvider } from './context/VarContext';
+import { ScoreProvider } from './context/ScoreContext';
 
 export default function App() {
   return (
     <View style={styles.container}>
       <NavProvider>
         <VarProvider>
-          <Router />
+          <ScoreProvider>
+            <Router />
+          </ScoreProvider>
         </VarProvider>
       </NavProvider>
-      <StatusBar style="auto" />
+      <StatusBar style="auto" hidden={true} />
     </View>
   );
 }

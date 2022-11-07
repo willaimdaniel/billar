@@ -1,20 +1,23 @@
 import { StyleSheet, Text, View, Pressable, SafeAreaView } from 'react-native'
-import React, {useContext, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Camera, CameraType } from 'expo-camera'
 import { NavContext } from '../context/NavContext';
 import { VarContext } from '../context/VarContext';
 import Score from '../components/Game/Score';
+import TotalScore from '../components/Game/TotalScore';
 
 export default function BillarScreen() {
     const [permission, requestPermission] = Camera.useCameraPermissions();
     const [status, permissionmicrophone] = Camera.useMicrophonePermissions();
     const [video, setvideo] = useState(null)
+    const [inVideo, setinVideo] = useState(null)
 
     const { setpage } = useContext(NavContext)
     const { setvideoGame } = useContext(VarContext)
 
     async function startGame() {
         if (status.granted === true) {
+            setinVideo(1)
             const data = await video.recordAsync({ mute: true });
             setvideoGame(data.uri)
             console.log(data.uri);
@@ -25,6 +28,7 @@ export default function BillarScreen() {
     }
 
     function record() {
+        setinVideo(null)
         video.stopRecording();
         setpage('var')
     }
@@ -48,28 +52,33 @@ export default function BillarScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Camera
-                style={styles.camera}
-                type={CameraType.back}
-                ref={ref => setvideo(ref)}
-            >
-                <View style={styles.cameraContainer}>
-                    <Score />
-                    <View style={{ flexDirection: 'row' }}>
-
-                        <Pressable onPress={startGame}>
-                            <Text style={styles.var}>
-                                Jugar
-                            </Text>
-                        </Pressable>
-                        <Pressable onPress={record}>
-                            <Text style={styles.var}>
-                                VAR
-                            </Text>
-                        </Pressable>
+            <TotalScore />
+            <View style={{ flexDirection: 'row', flex: 1 }}>
+                <Score player={1} />
+                <Camera
+                    style={styles.camera}
+                    type={CameraType.back}
+                    ref={ref => setvideo(ref)}
+                >
+                    <View style={styles.cameraContainer}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Pressable
+                                onPress={inVideo
+                                    ? record
+                                    : startGame
+                                }>
+                                <Text style={styles.var}>
+                                    {inVideo
+                                        ? 'Repeticion'
+                                        : 'Jugar'
+                                    }
+                                </Text>
+                            </Pressable>
+                        </View>
                     </View>
-                </View>
-            </Camera>
+                </Camera>
+                <Score player={2} />
+            </View>
         </SafeAreaView>
     )
 }
@@ -77,8 +86,6 @@ export default function BillarScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        backgroundColor: '#a8dadc'
     },
     camera: {
         flex: 1,
