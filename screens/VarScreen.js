@@ -1,12 +1,15 @@
 import {
     StyleSheet,
     View,
+    SafeAreaView,
     TouchableOpacity,
+    Pressable,
     Animated,
     PanResponder,
-    useWindowDimensions
+    useWindowDimensions,
+    BackHandler
 } from 'react-native'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useRef, useState, useEffect } from 'react'
 import { Video } from 'expo-av';
 import { NavContext } from '../context/NavContext';
 import { VarContext } from '../context/VarContext';
@@ -26,6 +29,7 @@ export default function VarScreen() {
 
     const [status, setStatus] = useState({});
     const [speed, setspeed] = useState(1)
+    const [zoom, setzoom] = useState(1)
 
     const video = useRef(null);
 
@@ -63,27 +67,24 @@ export default function VarScreen() {
                     scale.setValue(1 + screenMovedPercents * 3);
                 }
             },
-            onPanResponderRelease: () => {
-                Animated.parallel([
-                    Animated.spring(pan, {
-                        toValue: {
-                            x: 0,
-                            y: 0,
-                        },
-                        useNativeDriver: true,
-                    }),
-                    Animated.spring(scale, {
-                        toValue: 1,
-                        useNativeDriver: true,
-                    }),
-                ]).start();
-            },
         })
     ).current;
 
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            () => {
+                setpage('billar')
+                return true
+            }
+        );
+
+        return () => backHandler.remove();
+    }, [])
+
     return (
         <View style={styles.container}>
-            <View style={{ justifyContent: 'space-evenly' }}>
+            <SafeAreaView style={{ justifyContent: 'space-evenly' }}>
                 <TouchableOpacity
                     onPress={() => setpage('billar')}
                 >
@@ -104,33 +105,40 @@ export default function VarScreen() {
                 >
                     <MaterialIcons name="slow-motion-video" size={24} color="black" />
                 </TouchableOpacity>
-            </View>
-            <Animated.View
-                style={{
-                    flex: 1,
-                    height: dimensions.height,
-                    width: dimensions.width,
-                    transform: [
-                        { translateX: pan.x },
-                        { translateY: pan.y },
-                        { scale },
-                    ],
-                }}
-                {...panResponder.panHandlers}
-            >
-                <Video
-                    ref={video}
-                    style={{ flex: 1 }}
-                    source={{
-                        uri: videoGame,
+            </SafeAreaView>
+            <SafeAreaView style={{ flex: 1 }}>
+                <Animated.View
+                    style={{
+                        height: '100%',
+                        width: '100%',
+                        transform: [
+                            { translateX: pan.x },
+                            { translateY: pan.y },
+                            { scale },
+                        ],
                     }}
-                    useNativeControls
-                    rate={speed}
-                    resizeMode="contain"
-                    isLooping={false}
-                    onPlaybackStatusUpdate={status => setStatus(() => status)}
-                />
-            </Animated.View>
+                    {...panResponder.panHandlers}
+                >
+                    <Pressable
+                        style={{flex: 1}}
+                        onPressIn={
+                            () => status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
+                        }
+                    >
+                        <Video
+                            ref={video}
+                            style={{ flex: 1 }}
+                            source={{
+                                uri: videoGame,
+                            }}
+                            useNativeControls
+                            rate={speed}
+                            isLooping
+                            onPlaybackStatusUpdate={status => setStatus(() => status)}
+                        />
+                    </Pressable>
+                </Animated.View>
+            </SafeAreaView>
         </View>
     )
 }
