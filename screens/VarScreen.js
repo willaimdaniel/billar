@@ -82,63 +82,79 @@ export default function VarScreen() {
         return () => backHandler.remove();
     }, [])
 
-    return (
-        <View style={styles.container}>
-            <SafeAreaView style={{ justifyContent: 'space-evenly' }}>
-                <TouchableOpacity
-                    onPress={() => setpage('billar')}
-                >
-                    <Entypo name="back" size={30} color="black" />
-                </TouchableOpacity>
+    function SpeedOption() {
+        if (speed === 0.25) {
+            return (
                 <TouchableOpacity
                     onPress={() => setspeed(1)}
                 >
-                    <MaterialCommunityIcons name="play-speed" size={24} color="black" />
+                    <MaterialCommunityIcons name="play-speed" size={24} color="#ffff" />
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => setspeed(0.5)}
-                >
-                    <MaterialCommunityIcons name="speedometer-slow" size={24} color="black" />
-                </TouchableOpacity>
+            )
+        } else if (speed === 0.5) {
+            return (
                 <TouchableOpacity
                     onPress={() => setspeed(0.25)}
                 >
-                    <MaterialIcons name="slow-motion-video" size={24} color="black" />
+                    <MaterialIcons name="slow-motion-video" size={24} color="#ffff" />
                 </TouchableOpacity>
-            </SafeAreaView>
-            <SafeAreaView style={{ flex: 1 }}>
-                <Animated.View
-                    style={{
-                        height: '100%',
-                        width: '100%',
-                        transform: [
-                            { translateX: pan.x },
-                            { translateY: pan.y },
-                            { scale },
-                        ],
-                    }}
-                    {...panResponder.panHandlers}
+            )
+        } else {
+            return (
+                <TouchableOpacity
+                    onPress={() => setspeed(0.5)}
                 >
-                    <Pressable
-                        style={{flex: 1}}
-                        onPressIn={
-                            () => status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
-                        }
-                    >
-                        <Video
-                            ref={video}
-                            style={{ flex: 1 }}
-                            source={{
-                                uri: videoGame,
-                            }}
-                            useNativeControls
-                            rate={speed}
-                            isLooping
-                            onPlaybackStatusUpdate={status => setStatus(() => status)}
-                        />
-                    </Pressable>
-                </Animated.View>
-            </SafeAreaView>
+                    <MaterialCommunityIcons name="speedometer-slow" size={24} color="#ffff" />
+                </TouchableOpacity>
+            )
+        }
+    }
+
+    return (
+        <View style={styles.container}>
+            <View style={{
+                justifyContent: 'space-evenly',
+                height: dimensions.height,
+                width: dimensions.width * 0.1,
+                zIndex: 3
+            }}>
+                <TouchableOpacity
+                    onPress={() => setpage('billar')}
+                >
+                    <Entypo name="back" size={30} color="#ffff" />
+                </TouchableOpacity>
+                <SpeedOption />
+            </View>
+            <Animated.View
+                style={{
+                    height: '100%',
+                    width: '100%',
+                    transform: [
+                        { translateX: pan.x },
+                        { translateY: pan.y },
+                        { scale },
+                    ],
+                }}
+                {...panResponder.panHandlers}
+            >
+                <Pressable
+                    style={{ flex: 1 }}
+                    onPressIn={
+                        () => status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
+                    }
+                >
+                    <Video
+                        ref={video}
+                        style={{ flex: 1 }}
+                        source={{
+                            uri: videoGame,
+                        }}
+                        rate={speed}
+                        isLooping
+                        onPlaybackStatusUpdate={status => setStatus(() => status)}
+                    />
+                </Pressable>
+            </Animated.View>
         </View>
     )
 }
