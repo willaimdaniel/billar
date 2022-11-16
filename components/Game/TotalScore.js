@@ -1,22 +1,32 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React, { useContext } from 'react'
 import { ScoreContext } from '../../context/ScoreContext'
 
 export default function TotalScore() {
-    const { scoreOne, scoretwo } = useContext(ScoreContext)
+    const { scoreOne, scoretwo, setscoreOne, setscoretwo } = useContext(ScoreContext)
+
+    function reboootPoins() {
+        setscoreOne(0)
+        setscoretwo(0)
+    }
 
     return (
         <View style={styles.container}>
-            <Pressable style={styles.playerOne}>
+            <View style={styles.playerOne}>
                 <Text style={styles.point}>
                     {scoreOne}
                 </Text>
-            </Pressable>
-            <Pressable style={styles.playerTwo}>
+            </View>
+            <TouchableOpacity style={{ width: 200 }} onPress={reboootPoins}>
+                <Text style={styles.reboot}>
+                    Reiniciar
+                </Text>
+            </TouchableOpacity>
+            <View style={styles.playerTwo}>
                 <Text style={styles.point}>
                     {scoretwo}
                 </Text>
-            </Pressable>
+            </View>
         </View>
     )
 }
@@ -36,8 +46,15 @@ const styles = StyleSheet.create({
         width: '50%'
 
     },
-    point:{
+    point: {
         fontSize: 100,
         textAlign: 'center'
+    },
+    reboot: {
+        flex: 1,
+        color: '#ffff',
+        fontSize: 20,
+        textAlign: 'center',
+        textAlignVertical: 'center',
     }
 })
